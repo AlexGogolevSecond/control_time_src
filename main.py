@@ -1,4 +1,5 @@
 # pip install win11toast ; для win10 видимо win10toast
+# пример: https://thepythoncorner.com/posts/2018-08-01-how-to-create-a-windows-service-in-python/
 import os
 from datetime import datetime
 import socket
@@ -91,3 +92,17 @@ if __name__ == '__main__':
 #     time.sleep(TIMEOUT)
 #     main()
 
+'''
+****************************************************
+
+C:test> python PythonCornerExample.py install
+Installing service PythonCornerExample
+Service installed
+
+In the future, if you want to change the code of your service, just modify it and reinstall the service with:
+C:test> python PythonCornerExample.py update
+Changing service configuration
+Service updated
+
+
+'''
