@@ -78,23 +78,23 @@ class PythonCornerExample(SMWinservice):
     def control_time(self):
         """Проверяем текущего пользователя и текущее время"""
         try:
-            now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             with sqlite3.connect("C:\ProgramData\control_time_srv\log.db") as conn:
                 current_user = os.getlogin()
                 target_time_delta : bool = datetime.now().hour in (0, 1, 2, 3, 4, 5, 6, 23, 24)
-                if 'dasha' in current_user.lower() and target_time_delta:
-                    toast(f'The computer will turn off in {TIMEOUT} seconds')
-                    time.sleep(TIMEOUT)
-                    res_os_system = os.system('shutdown -s')
 
-                str_log = f'''current_user: {current_user}
-                              target_time_delta: {target_time_delta}
-                              datetime.now().hour: {datetime.now().hour}
-                              res_os_system: {res_os_system}
-                           '''
+                str_log = f'''current_user: {current_user} target_time_delta: {target_time_delta} datetime.now().hour: {datetime.now().hour}'''
+                now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                 cur = conn.execute(f"""insert into messages (datetime, message)
                                     values (\'{now}\', \'{str_log}\')""")
                 cur.close()
+                if 'dasha' in current_user.lower() and target_time_delta:
+                    now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                    cur = conn.execute(f"""insert into messages (datetime, message)
+                                    values (\'{now}\', \'вошли в условие по Даше, сейчас д.б. уведомление и выкл\')""")
+                    cur.close()
+                    toast(f'The computer will turn off in {TIMEOUT} seconds')
+                    time.sleep(TIMEOUT)
+                    os.system('shutdown -s')
         except Exception as ex:
             with open("C:\ProgramData\control_time_srv\exception.txt",
                       'a', encoding='utf-8') as file:
