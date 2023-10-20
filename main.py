@@ -10,6 +10,7 @@ import servicemanager
 import win32event
 import win32service
 import sqlite3
+import getpass
 
 
 TIMEOUT = 10
@@ -80,9 +81,13 @@ class PythonCornerExample(SMWinservice):
         try:
             with sqlite3.connect("C:\ProgramData\control_time_srv\log.db") as conn:
                 current_user = os.getlogin()
+                get_pass_get_user = getpass.getuser()
                 target_time_delta : bool = datetime.now().hour in (0, 1, 2, 3, 4, 5, 6, 23, 24)
 
-                str_log = f'''current_user: {current_user} target_time_delta: {target_time_delta} datetime.now().hour: {datetime.now().hour}'''
+                str_log = f'''current_user: {current_user}
+                              get_pass_get_user: {get_pass_get_user}
+                              target_time_delta: {target_time_delta}
+                              datetime.now().hour: {datetime.now().hour}'''
                 now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                 cur = conn.execute(f"""insert into messages (datetime, message)
                                     values (\'{now}\', \'{str_log}\')""")
