@@ -11,6 +11,8 @@ import win32event
 import win32service
 import sqlite3
 import getpass
+import subprocess
+from typing import Optional
 
 
 TIMEOUT = 10
@@ -76,16 +78,28 @@ class PythonCornerExample(SMWinservice):
             self.control_time()
             time.sleep(50)
 
+    def get_current_user_os(self) -> Optional[str]:
+        """Определяем текущего пользователя ОС (Windows)
+        Returns:
+            Optional[str]: имя пользователя
+        """
+        res = subprocess.run(['powershell.exe', '$env:UserName'], 
+                             capture_output=True)
+        return res.stdout
+
     def control_time(self):
         """Проверяем текущего пользователя и текущее время"""
         try:
             with sqlite3.connect("C:\ProgramData\control_time_srv\log.db") as conn:
-                current_user = os.getlogin()
-                get_pass_get_user = getpass.getuser()
+                # current_user = os.getlogin()
+                # get_pass_get_user = getpass.getuser()
+                current_user = self.get_current_user_os()
+                if not current_user:
+                    return
+
                 target_time_delta : bool = datetime.now().hour in (0, 1, 2, 3, 4, 5, 6, 23, 24)
 
                 str_log = f'''current_user: {current_user}
-                              get_pass_get_user: {get_pass_get_user}
                               target_time_delta: {target_time_delta}
                               datetime.now().hour: {datetime.now().hour}'''
                 now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
