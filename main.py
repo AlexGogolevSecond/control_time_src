@@ -85,6 +85,10 @@ class PythonCornerExample(SMWinservice):
         """
         res = subprocess.run(['powershell.exe', '$env:UserName'], 
                              capture_output=True)
+        now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        with open("C:\ProgramData\control_time_srv\exception.txt",
+                      'a', encoding='utf-8') as file:
+            file.write(f'\n{now}: res.stdout: {res.stdout}')
         return res.stdout
 
     def control_time(self):
@@ -96,8 +100,9 @@ class PythonCornerExample(SMWinservice):
                 current_user = self.get_current_user_os()
                 if not current_user:
                     return
-
-                target_time_delta : bool = datetime.now().hour in (0, 1, 2, 3, 4, 5, 6, 23, 24)
+                
+                hours = (0, 1, 2, 3, 4, 5, 6, 23, 24)
+                target_time_delta : bool = datetime.now().hour in hours
 
                 str_log = f'''current_user: {current_user}
                               target_time_delta: {target_time_delta}
